@@ -145,9 +145,9 @@ public class HashTableChainTest {
             other.put(Integer.toString(i), i);
             //System.out.println(hashTable.get(Integer.toString(i)));
         }
-        System.out.println("hashTable -> " + hashTable.toString());
+        System.out.println("hashTable -> " + hashTable.toString() + " ~ " + hashTable.hashCode());
         System.out.println();
-        System.out.println("other     -> " + other.toString());
+        System.out.println("other     -> " + other.toString()+ " ~ " + other.hashCode());
         assertTrue(hashTable.equals(other));
     }
 

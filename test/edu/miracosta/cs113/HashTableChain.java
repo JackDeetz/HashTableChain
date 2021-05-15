@@ -31,6 +31,13 @@ public class HashTableChain<K, V> implements Map<K, V>  {
     @Override
     public V get(Object key)
     {
+//        SetIterator iter = new SetIterator() ;
+//        while (iter.hasNext())
+//        {
+//            if (iter.next().getKey().equals(key))
+//                return iter.lastItemReturned.getValue() ;
+//        }
+//        return null ;
         int index = key.hashCode() % table.length ;
         index = (index < 0 ? index + table.length : index) ;
         if (table[index] == null)
@@ -49,6 +56,7 @@ public class HashTableChain<K, V> implements Map<K, V>  {
     public V put(K key, V value)
     {
         int index = key.hashCode() % table.length ;
+        //int index = Objects.hashCode(key) % table.length ;
         if (index < 0)
             index += table.length ;
         if (table[index] == null)
@@ -75,28 +83,34 @@ public class HashTableChain<K, V> implements Map<K, V>  {
     @Override
     public V remove(Object key)
     {
-//        if (table != null)
-//            return null ;
-        System.out.println("Here");
-        int index = key.hashCode() % table.length ; //hash index
-        if (index < 0)
-            index += table.length ;
-        if (table[index] == null)   //no entry where hashIndex would 'put' it
-            return null ;
-        for (Entry<K, V> nextItem : table[index]) //search all Entry's for the 'key' to remove
+        SetIterator iter = new SetIterator() ;
+        while (iter.hasNext())
         {
-            if (nextItem.getKey().equals(key))  //if found
-            {
-                Entry<K, V> output = new Entry<>(nextItem.getKey(), nextItem.getValue())  ;    //(return removed Value)
-                System.out.println("Here is the value->" + output.getValue());
-                table[index].remove(nextItem) ;   //remove Entry
-                numKeys-- ; //decriment the counter of Entry's
-                if (table[index].isEmpty()) //if only entry removed, remove empty LinkedList
-                    table[index] = null ;
-                return output.getValue() ; //return the value of removed Entry
+            if (iter.next().getKey().equals(key)) {
+                Entry<K, V> temp = new Entry<K, V>(iter.lastItemReturned.getKey(), iter.lastItemReturned.getValue());
+                iter.remove();
+                return temp.getValue() ;
             }
         }
-        return null ; //not found
+        return null ;
+//        int index = key.hashCode() % table.length ; //hash index
+//        if (index < 0)
+//            index += table.length ;
+//        if (table[index] == null)   //no entry where hashIndex would 'put' it
+//            return null ;
+//        for (Entry<K, V> nextItem : table[index]) //search all Entry's for the 'key' to remove
+//        {
+//            if (nextItem.getKey().equals(key))  //if found
+//            {
+//                Entry<K, V> output = new Entry<>(nextItem.getKey(), nextItem.getValue())  ;    //(return removed Value)
+//                table[index].remove(nextItem) ;   //remove Entry
+//                numKeys-- ; //decriment the counter of Entry's
+//                if (table[index].isEmpty()) //if only entry removed, remove empty LinkedList
+//                    table[index] = null ;
+//                return output.getValue() ; //return the value of removed Entry
+//            }
+//        }
+//        return null ; //not found
     }
 
     // returns number of keys
@@ -118,32 +132,47 @@ public class HashTableChain<K, V> implements Map<K, V>  {
     @Override
     public boolean containsKey(Object key)
     {
-        for (LinkedList<Entry<K, V>> tableEntry : table)
+        SetIterator iter = new SetIterator() ;
+        while (iter.hasNext())
         {
-            if (tableEntry != null)
-                for (Entry e : tableEntry)
-                {
-                    if (e.getKey().equals(key))
-                        return true ;
-                }
+            if (iter.next().getKey().equals(key))
+                return true ;
         }
         return false ;
+
+//        for (LinkedList<Entry<K, V>> tableEntry : table)
+//        {
+//            if (tableEntry != null)
+//                for (Entry e : tableEntry)
+//                {
+//                    if (e.getKey().equals(key))
+//                        return true ;
+//                }
+//        }
+//        return false ;
     }
 
     // returns boolean if table has the searched for value
     @Override
     public boolean containsValue(Object value)
     {
-        for (LinkedList<Entry<K, V>> tableEntry : table)
+        SetIterator iter = new SetIterator() ;
+        while (iter.hasNext())
         {
-            if (tableEntry != null)
-                for (Entry e : tableEntry)
-                {
-                    if (e.getValue().equals(value))
-                        return true ;
-                }
+            if (iter.next().getValue().equals(value))
+                return true ;
         }
         return false ;
+//        for (LinkedList<Entry<K, V>> tableEntry : table)
+//        {
+//            if (tableEntry != null)
+//                for (Entry e : tableEntry)
+//                {
+//                    if (e.getValue().equals(value))
+//                        return true ;
+//                }
+//        }
+//        return false ;
     }
 
 
@@ -154,11 +183,15 @@ public class HashTableChain<K, V> implements Map<K, V>  {
      */
     private void rehash()
     {
+        //Set<Entry<K, V>> oldTable = new HashSet<>(entrySet()) ;
         LinkedList<Entry<K, V>>[] oldTable = table ;
         table = new LinkedList[(table.length * 2) + 1] ;
         numKeys = 0 ;
         for (LinkedList<Entry<K, V>> tableEntry : oldTable)
+        //for (Map.Entry<K, V> tableEntry : oldTable)
         {
+//            System.out.println(tableEntry.toString());
+//            put(tableEntry.getKey(), tableEntry.getValue()) ;
             if (tableEntry != null)
                 for (Entry e : tableEntry)
                 {
@@ -171,7 +204,18 @@ public class HashTableChain<K, V> implements Map<K, V>  {
 //table that captures the index of each table element that is not null and then the contents of
 //that table element
     @Override
-    public String toString() {
+    public String toString()
+    {
+//        return entrySet().toString();
+//        StringBuilder sb = new StringBuilder("{") ;
+//        SetIterator iter = new SetIterator() ;
+//        while (iter.hasNext())
+//        {
+//            sb.append(iter.next() + ", ") ;
+//        }
+//
+//        sb.delete(sb.length()-2, sb.length()) ;
+//        return sb.toString() + "}" ;
         StringBuilder sb = new StringBuilder("{") ;
         for (int i = table.length - 1 ; i >= 0 ; i-- ) {
             if (table[i] != null) {
@@ -239,21 +283,29 @@ public class HashTableChain<K, V> implements Map<K, V>  {
         if (!(o instanceof HashTableChain))
             return false ;
         HashTableChain<?, ?> that = (HashTableChain<?, ?>) o;
-        return toString().equals(that.toString()) ;
+        return hashCode() == that.hashCode() ;
         //return numKeys == that.numKeys && Arrays.equals(table, that.table);
     }
 
     @Override
     public int hashCode()
     {
-        int hash = 0, count = 1 ;
-        for (int i = 0 ; i < table.length ; i++)
-            if (table[i] != null)
-                for (Entry<K, V> entry : table[i])
-                    for (int j = 0 ; j < entry.getKey().toString().length() ; j++)
-                        hash += ((int) entry.getKey().toString().charAt(j)) * Math.pow(31, table.length - count++) ;
+        int hash = 1 ;
+        Set<K> setOfKeys = keySet();
+        for (K k : setOfKeys)
+            hash += Objects.hashCode(k) ;
+        return hash ;
 
-        return hash  ;
+        //return Objects.hashCode(keySet()) + 1 ; //same as above
+
+//        int hash = 0, count = 1 ;
+//        for (int i = 0 ; i < table.length ; i++)
+//            if (table[i] != null)
+//                for (Entry<K, V> entry : table[i])
+//                    for (int j = 0 ; j < entry.getKey().toString().length() ; j++)
+//                        hash += ((int) entry.getKey().toString().charAt(j)) * Math.pow(31, table.length - count++) ;
+//
+//        return hash  ;
 
     }
 
@@ -331,6 +383,11 @@ public class HashTableChain<K, V> implements Map<K, V>  {
         @Override
         public int size() {
             return numKeys ;
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode();
         }
     }
 
