@@ -28,6 +28,7 @@ public class HashTableChainTest {
     private void populateMapWithPut(int numElements) {
         for (int i = 0; i < numElements; i++) {
             hashTable.put(Integer.toString(i), i);
+            System.out.println(Integer.toString(i) + " ~ " + i);
         }
     }
 

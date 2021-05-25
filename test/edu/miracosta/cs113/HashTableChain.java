@@ -279,12 +279,31 @@ public class HashTableChain<K, V> implements Map<K, V>  {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof HashTableChain))
-            return false ;
-        HashTableChain<?, ?> that = (HashTableChain<?, ?>) o;
-        return hashCode() == that.hashCode() ;
-        //return numKeys == that.numKeys && Arrays.equals(table, that.table);
+        if (o instanceof  Map)
+        {
+            Map tempMap = (Map) o ;
+            if (tempMap.size() != this.size())
+                return false ;
+
+            for (LinkedList<Entry<K, V>> linkedListInArray : table)
+            {
+                if (linkedListInArray != null)
+                {
+                    for(Entry<K,V> entry : linkedListInArray)
+                    {
+                        if (!(tempMap.containsValue(entry.getValue())))
+                            return false ;
+                    }
+                }
+            }
+        }
+        return true ;
+//        if (this == o) return true;
+//        if (!(o instanceof HashTableChain))
+//            return false ;
+//        HashTableChain<?, ?> that = (HashTableChain<?, ?>) o;
+//        return hashCode() == that.hashCode() ;
+//        //return numKeys == that.numKeys && Arrays.equals(table, that.table);
     }
 
     @Override
